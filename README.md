@@ -69,3 +69,78 @@ http://localhost:8888/payment-service/master    to check config on the endpoint 
 
 ![image](https://github.com/achrafsq/Microservices-config-extern-pattern/assets/137192466/93881ee9-403c-4720-b07c-a7ea6b6d2003)
 
+registry-Service
+		Dependencies
+  			pom.xml
+			<dependency>
+			    <groupId>org.springframework.cloud</groupId>
+			    <artifactId>spring-cloud-starter-config</artifactId>
+			</dependency>
+			<dependency>
+			    <groupId>org.springframework.cloud</groupId>
+			    <artifactId>spring-cloud-starter-netflix-eureka-server</artifactId>
+			</dependency>
+application.proprerties
+		bootstrap the configuration
+		spring.application.name=eureka-service
+		spring.cloud.config.enabled=true
+		spring.config.import=configserver:http://localhost:8888
+
+![image](https://github.com/achrafsq/Microservices-config-extern-pattern/assets/137192466/288dae53-0a47-4559-ad86-1c4b568fc572)
+
+api-getway
+		Dependencies
+  			pom.xml
+			<dependency>
+			    <groupId>org.springframework.cloud</groupId>
+			    <artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			</dependency>
+			
+			<dependency>
+			    <groupId>org.springframework.cloud</groupId>
+			    <artifactId>spring-cloud-starter-gateway</artifactId>
+			</dependency>
+			
+			<dependency>
+			    <groupId>org.springframework.boot</groupId>
+			    <artifactId>spring-boot-starter-actuator</artifactId>
+			</dependency>
+			
+			<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-hystrix -->
+			<dependency>
+			    <groupId>org.springframework.cloud</groupId>
+			    <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+			    <version>2.2.10.RELEASE</version>
+			</dependency>
+
+application.proprerties
+		spring.application.name=api-getway
+
+		application.yml
+			spring:
+			  cloud:
+			    gateway:
+			      routes:
+			        - id: r1
+			          uri: http://localhost:8062/
+			          predicates:
+			            - Path=/customers/**
+			        - id: r2
+			          uri: http://localhost:8063/
+			          predicates:
+			            - Path=/products/**
+			        - id: r3
+			          uri: http://localhost:8064/
+			          predicates:
+			            - Path=/admins/**
+			    discovery:
+			      enabled: false
+			server:
+			  port: 8899
+route r1 , r2 , r3 specified for  services  each services have some paths
+
+![image](https://github.com/achrafsq/Microservices-config-extern-pattern/assets/137192466/ac15d270-c02d-4606-8c27-c5de3da662a0)
+
+Discovery : true    will make service discovred by eureka service-registry
+
+![image](https://github.com/achrafsq/Microservices-config-extern-pattern/assets/137192466/263ba86a-7504-4c66-ba45-2997836f427e)
