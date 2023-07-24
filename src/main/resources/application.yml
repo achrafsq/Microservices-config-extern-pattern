@@ -1,0 +1,21 @@
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: r1
+          uri: http://localhost:8062/
+          predicates:
+            - Path=/customers/**
+        - id: r2
+          uri: http://localhost:8063/
+          predicates:
+            - Path=/products/**
+        - id: r3
+          uri: http://localhost:8064/
+          predicates:
+            - Path=/admins/**
+    discovery:
+      enabled: false
+server:
+  port: 8899
+
